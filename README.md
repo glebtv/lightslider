@@ -5,7 +5,7 @@
 
 jQuery lightSlider
 =============
-
+This is a fork of jQuery lightSlider, which extends lightSlider with option galleryHorizontal to force gallery scrolling horizontaly when vertical == true
 
 Demo
 ----------------
@@ -119,6 +119,8 @@ add the Following code to the &lt;head&gt; of your document.
             verticalHeight:500,
             vThumbWidth:100,
 
+            galleryHorizontal: false,
+
             thumbItem:10,
             pager: true,
             gallery: false,
@@ -160,7 +162,7 @@ add the Following code to the &lt;head&gt; of your document.
 </script>
 ```
 ### Report an Issue ###
-If you think you might have found a bug or if you have a feature suggestion please use github [issue tracker](https://github.com/sachinchoolur/lightslider/issues/new). Also please try to add a jsfiddle that demonstrates your problem 
+If you think you might have found a bug or if you have a feature suggestion please use github [issue tracker](https://github.com/sachinchoolur/lightslider/issues/new). Also please try to add a jsfiddle that demonstrates your problem
 
 If you need any help with implementing lightslider in your project or if have you any personal support requests i requset you to please use [stackoverflow](https://stackoverflow.com/) instead of github issue tracker
 
@@ -171,4 +173,3 @@ If you like lightSlider support me by staring this repository or tweet about thi
 #### [guidelines for contributors](https://github.com/sachinchoolur/lightslider/blob/master/contributing.md)
 
 #### MIT © [Sachin](https://twitter.com/sachinchoolur)
-
