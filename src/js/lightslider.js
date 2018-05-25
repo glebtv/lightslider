@@ -558,18 +558,11 @@
                     v = -v;
                 }
                 if (this.doCss()) {
-                    if (settings.vertical === true) {
-                        if (settings.galleryHorizontal === true) {
-                          ob.css({
-                              'transform': 'translate3d(' + (-v) + 'px, 0px, 0px)',
-                              '-webkit-transform': 'translate3d(' + (-v) + 'px, 0px, 0px)'
-                          });
-                        } else {
-                          ob.css({
-                              'transform': 'translate3d(0px, ' + (-v) + 'px, 0px)',
-                              '-webkit-transform': 'translate3d(0px, ' + (-v) + 'px, 0px)'
-                          });
-                        }
+                    if (settings.vertical === true && !settings.galleryHorizontal) {
+                        ob.css({
+                            'transform': 'translate3d(0px, ' + (-v) + 'px, 0px)',
+                            '-webkit-transform': 'translate3d(0px, ' + (-v) + 'px, 0px)'
+                        });
                     } else {
                         ob.css({
                             'transform': 'translate3d(' + (-v) + 'px, 0px, 0px)',
@@ -577,7 +570,7 @@
                         });
                     }
                 } else {
-                    if (settings.vertical === true) {
+                    if (settings.vertical === true && !settings.galleryHorizontal) {
                         ob.css('position', 'relative').animate({
                             top: -v + 'px'
                         }, settings.speed, settings.easing);
@@ -756,7 +749,6 @@
                         } else {
                             var swipeValT = w - elSize - settings.slideMargin;
                             swipeVal = swipeValT + ((swipeVal - swipeValT) / 5);
-
                         }
                     } else if (swipeVal < 0) {
                         if (settings.freeMove === false) {
@@ -843,12 +835,8 @@
                             }
                         }
                         if ($(e.target).attr('class') !== ('lSPrev') && $(e.target).attr('class') !== ('lSNext')) {
-                            if (settings.vertical === true) {
-                              if (settings.galleryHorizontal == true) {
-                                startCoords = e.pageX;
-                              } else {
-                                startCoords = e.pageY;
-                              }
+                            if (settings.vertical === true && !settings.galleryHorizontal) {
+                              startCoords = e.pageY;
                             } else {
                               startCoords = e.pageX;
                             }
@@ -868,12 +856,8 @@
                     });
                     $(window).on('mousemove', function (e) {
                         if (isDraging) {
-                            if (settings.vertical === true) {
-                              if (settings.galleryHorizontal == true) {
-                                endCoords = e.pageX;
-                              } else {
-                                endCoords = e.pageY;
-                              }
+                            if (settings.vertical === true && !settings.galleryHorizontal) {
+                              endCoords = e.pageY;
                             } else {
                               endCoords = e.pageX;
                             }
@@ -884,12 +868,8 @@
                         if (isDraging) {
                             $slide.find('.lightSlider').removeClass('lsGrabbing').addClass('lsGrab');
                             isDraging = false;
-                            if (settings.vertical === true) {
-                              if (settings.galleryHorizontal == true) {
-                                endCoords = e.pageX;
-                              } else {
-                                endCoords = e.pageY;
-                              }
+                            if (settings.vertical === true && !settings.galleryHorizontal) {
+                              endCoords = e.pageY;
                             } else {
                               endCoords = e.pageX;
                             }
@@ -938,10 +918,11 @@
                         endCoords = orig.targetTouches[0];
                         var xMovement = Math.abs(endCoords.pageX - startCoords.pageX);
                         var yMovement = Math.abs(endCoords.pageY - startCoords.pageY);
-                        if (settings.vertical === true) {
+                        if (settings.vertical === true && !settings.galleryHorizontal) {
                             if ((yMovement * 3) > xMovement) {
                                 e.preventDefault();
                             }
+                            console.log(endCoords.pageY, startCoords.pageY)
                             $this.touchMove(endCoords.pageY, startCoords.pageY);
                         } else {
                             if ((xMovement * 3) > yMovement) {
@@ -958,7 +939,7 @@
                             }
                         }
                         var distance;
-                        if (settings.vertical === true) {
+                        if (settings.vertical === true && !settings.galleryHorizontal) {
                             distance = endCoords.pageY - startCoords.pageY;
                         } else {
                             distance = endCoords.pageX - startCoords.pageX;
