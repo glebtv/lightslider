@@ -668,7 +668,11 @@
                     position = 0;
                     break;
                 case 'middle':
-                    position = (elSize / 2) - (thumbWidth / 2);
+                    if(settings.vertical) {
+                      position = ($slide.outerHeight() / 2) - (thumbWidth / 2);
+                    } else {
+                      position = (elSize / 2) - (thumbWidth / 2);
+                    }
                     break;
                 case 'right':
                     position = elSize - thumbWidth;
@@ -684,7 +688,7 @@
                 }
                 var thumbSlide;
                 if(settings.vertical) {
-                    thumbSlide = sc * ($slide.outerHeight() + settings.thumbMargin) / settings.thumbItem;
+                    thumbSlide = sc * ($slide.outerHeight() + settings.thumbMargin) / settings.thumbItem - (position);
                 } else {
                     thumbSlide = sc * ((thumbWidth + settings.thumbMargin)) - (position);
                 }
@@ -980,7 +984,7 @@
             refresh.chbreakpoint();
             if (settings.vertical === true) {
                 if (settings.galleryHorizontal === true) {
-                    elSize = $slide.outerWidth();
+                    elSize = settings.verticalHeight;
                 } else {
                   if (settings.item > 1) {
                       elSize = settings.verticalHeight;
