@@ -27,6 +27,7 @@
         vThumbWidth: 100,
         thumbItem: 10,
         thumbPosition: 'right',
+        fitImages: false,
         pager: true,
         gallery: false,
         galleryMargin: 5,
@@ -237,14 +238,15 @@
                     $slide.parent().addClass('vertical');
                     elSize = settings.verticalHeight;
                     $slide.parent().addClass('thumb-'+settings.thumbPosition)
-                    if (settings.galleryHorizontal === false) {
-                      $slide.css('height', elSize + 'px');
-                    }
+                    $slide.css('height', elSize + 'px');
                 } else {
                     elSize = $el.outerWidth();
                 }
                 if (settings.galleryHorizontal) {
                   $slide.parent().addClass('galleryHorizontal');
+                }
+                if (settings.fitImages) {
+                  $slide.parent().addClass('fit-images');
                 }
                 $children.addClass('lslide');
                 if (settings.loop === true && settings.mode === 'slide') {
@@ -346,7 +348,12 @@
             pager: function () {
                 var $this = this;
                 refresh.createPager = function () {
-                    thumbWidth = (elSize - ((settings.thumbItem * (settings.thumbMargin)) - settings.thumbMargin)) / settings.thumbItem;
+                    if (settings.vertical === true) {
+                      thumbWidth = ($slide.outerHeight() - ((settings.thumbItem * (settings.thumbMargin)  - settings.thumbMargin))) / settings.thumbItem
+                      // thumbWidth = elSize
+                    } else {
+                      thumbWidth = (elSize - ((settings.thumbItem * (settings.thumbMargin)) - settings.thumbMargin)) / settings.thumbItem;
+                    }
                     var $children = $slide.find('.lslide');
                     var length = $slide.find('.lslide').length;
                     var i = 0,
@@ -423,7 +430,7 @@
                         cl = 'lSGallery';
                     }
                     $slide.after('<ul class="lSPager ' + cl + '"></ul>');
-                    var gMargin = (settings.vertical) ? 'margin-left' : 'margin-top';
+                    var gMargin = (settings.vertical) ? (settings.thumbPosition == "right" ? 'margin-left' : 'margin-right') : 'margin-top';
                     $slide.parent().find('.lSPager').css(gMargin, settings.galleryMargin + 'px');
                     refresh.createPager();
                 }
@@ -675,9 +682,20 @@
                         sc = $pager.children().length;
                     }
                 }
-                var thumbSlide = sc * ((thumbWidth + settings.thumbMargin)) - (position);
-                if ((thumbSlide + elSize) > pagerWidth) {
-                    thumbSlide = pagerWidth - elSize - settings.thumbMargin;
+                var thumbSlide;
+                if(settings.vertical) {
+                    thumbSlide = sc * ($slide.outerHeight() + settings.thumbMargin) / settings.thumbItem;
+                } else {
+                    thumbSlide = sc * ((thumbWidth + settings.thumbMargin)) - (position);
+                }
+                if (settings.vertical) {
+                  if ((thumbSlide + $slide.outerHeight()) >= pagerWidth) {
+                    thumbSlide = pagerWidth - $slide.outerHeight() - settings.thumbMargin;
+                  }
+                } else {
+                  if ((thumbSlide + elSize) > pagerWidth) {
+                      thumbSlide = pagerWidth - elSize - settings.thumbMargin;
+                  }
                 }
                 if (thumbSlide < 0) {
                     thumbSlide = 0;

@@ -1,6 +1,3 @@
-/*! lightslider - v1.1.6 - 2016-10-25
-* https://github.com/sachinchoolur/lightslider
-* Copyright (c) 2016 Sachin N; Licensed MIT */
 (function ($, undefined) {
     'use strict';
     var defaults = {
@@ -29,6 +26,8 @@
         verticalHeight: 500,
         vThumbWidth: 100,
         thumbItem: 10,
+        thumbPosition: 'right',
+        fitImages: false,
         pager: true,
         gallery: false,
         galleryMargin: 5,
@@ -79,7 +78,8 @@
             elSize = 0,
             $slide = '',
             scene = 0,
-            property = (settings.vertical === true) ? 'height' : 'width',
+            thumbProperty = (settings.vertical === true) ? 'height' : 'width',
+            property = (settings.vertical === true) ? (settings.galleryHorizontal === true ? 'width' : 'height') : 'width',
             gutter = (settings.vertical === true) ? 'margin-bottom' : 'margin-right',
             slideValue = 0,
             pagerWidth = 0,
@@ -237,9 +237,16 @@
                 if (settings.vertical) {
                     $slide.parent().addClass('vertical');
                     elSize = settings.verticalHeight;
+                    $slide.parent().addClass('thumb-'+settings.thumbPosition)
                     $slide.css('height', elSize + 'px');
                 } else {
                     elSize = $el.outerWidth();
+                }
+                if (settings.galleryHorizontal) {
+                  $slide.parent().addClass('galleryHorizontal');
+                }
+                if (settings.fitImages) {
+                  $slide.parent().addClass('fit-images');
                 }
                 $children.addClass('lslide');
                 if (settings.loop === true && settings.mode === 'slide') {
@@ -282,7 +289,7 @@
                         } else {
                             if ($children.hasClass('clone')) {
                                 $el.find('.clone').remove();
-                                $this.move($el, 0);
+                                $this.moveSlide($el, 0);
                             }
                         }
                     };
@@ -318,7 +325,7 @@
                     refresh.sSW();
                     if (settings.loop === true) {
                         slideValue = $this.slideValue();
-                        this.move($el, slideValue);
+                        this.moveSlide($el, slideValue);
                     }
                     if (settings.vertical === false) {
                         this.setHeight($el, false);
@@ -341,7 +348,12 @@
             pager: function () {
                 var $this = this;
                 refresh.createPager = function () {
-                    thumbWidth = (elSize - ((settings.thumbItem * (settings.thumbMargin)) - settings.thumbMargin)) / settings.thumbItem;
+                    if (settings.vertical === true) {
+                      thumbWidth = ($slide.outerHeight() - ((settings.thumbItem * (settings.thumbMargin)  - settings.thumbMargin))) / settings.thumbItem
+                      // thumbWidth = elSize
+                    } else {
+                      thumbWidth = (elSize - ((settings.thumbItem * (settings.thumbMargin)) - settings.thumbMargin)) / settings.thumbItem;
+                    }
                     var $children = $slide.find('.lslide');
                     var length = $slide.find('.lslide').length;
                     var i = 0,
@@ -358,7 +370,7 @@
                         }
                         var thumb = $children.eq(i * settings.slideMove).attr('data-thumb');
                         if (settings.gallery === true) {
-                            pagers += '<li style="width:100%;' + property + ':' + thumbWidth + 'px;' + gutter + ':' + settings.thumbMargin + 'px"><a href="#"><img src="' + thumb + '" /></a></li>';
+                            pagers += '<li style="width:100%;' + thumbProperty + ':' + thumbWidth + 'px;' + gutter + ':' + settings.thumbMargin + 'px"><a href="#"><img src="' + thumb + '" /></a></li>';
                         } else {
                             pagers += '<li><a href="#">' + (i + 1) + '</a></li>';
                         }
@@ -381,7 +393,7 @@
                         }
                     }
                     var $cSouter = $slide.parent();
-                    $cSouter.find('.lSPager').html(pagers); 
+                    $cSouter.find('.lSPager').html(pagers);
                     if (settings.gallery === true) {
                         if (settings.vertical === true) {
                             // set Gallery thumbnail width
@@ -389,13 +401,13 @@
                         }
                         pagerWidth = (i * (settings.thumbMargin + thumbWidth)) + 0.5;
                         $cSouter.find('.lSPager').css({
-                            property: pagerWidth + 'px',
+                            thumbProperty: pagerWidth + 'px',
                             'transition-duration': settings.speed + 'ms'
                         });
                         if (settings.vertical === true) {
-                            $slide.parent().css('padding-right', (settings.vThumbWidth + settings.galleryMargin) + 'px');
+                            $slide.parent().css('padding-' + settings.thumbPosition, (settings.vThumbWidth + settings.galleryMargin) + 'px');
                         }
-                        $cSouter.find('.lSPager').css(property, pagerWidth + 'px');
+                        $cSouter.find('.lSPager').css(thumbProperty, pagerWidth + 'px');
                     }
                     var $pager = $cSouter.find('.lSPager').find('li');
                     $pager.first().addClass('active');
@@ -418,7 +430,7 @@
                         cl = 'lSGallery';
                     }
                     $slide.after('<ul class="lSPager ' + cl + '"></ul>');
-                    var gMargin = (settings.vertical) ? 'margin-left' : 'margin-top';
+                    var gMargin = (settings.vertical) ? (settings.thumbPosition == "right" ? 'margin-left' : 'margin-right') : 'margin-top';
                     $slide.parent().find('.lSPager').css(gMargin, settings.galleryMargin + 'px');
                     refresh.createPager();
                 }
@@ -454,7 +466,7 @@
                         setCss();
                         if (!interval) {
                             $this.auto();
-                        }   
+                        }
                     }else{
                         obj.find('img').on('load', function () {
                             setTimeout(function () {
@@ -526,7 +538,44 @@
                     }
                 }
             },
-            move: function (ob, v) {
+            moveSlide: function (ob, v) {
+                if (settings.rtl === true) {
+                    v = -v;
+                }
+                if (this.doCss()) {
+                    if (settings.vertical === true) {
+                        if (settings.galleryHorizontal === true) {
+                          ob.css({
+                              'transform': 'translate3d(' + (-v) + 'px, 0px, 0px)',
+                              '-webkit-transform': 'translate3d(' + (-v) + 'px, 0px, 0px)'
+                          });
+                        } else {
+                          ob.css({
+                              'transform': 'translate3d(0px, ' + (-v) + 'px, 0px)',
+                              '-webkit-transform': 'translate3d(0px, ' + (-v) + 'px, 0px)'
+                          });
+                        }
+                    } else {
+                        ob.css({
+                            'transform': 'translate3d(' + (-v) + 'px, 0px, 0px)',
+                            '-webkit-transform': 'translate3d(' + (-v) + 'px, 0px, 0px)',
+                        });
+                    }
+                } else {
+                    if (settings.vertical === true) {
+                        ob.css('position', 'relative').animate({
+                            top: -v + 'px'
+                        }, settings.speed, settings.easing);
+                    } else {
+                        ob.css('position', 'relative').animate({
+                            left: -v + 'px'
+                        }, settings.speed, settings.easing);
+                    }
+                }
+                var $thumb = $slide.parent().find('.lSPager').find('li');
+                this.active($thumb, true);
+            },
+            moveThumb: function (ob, v) {
                 if (settings.rtl === true) {
                     v = -v;
                 }
@@ -572,7 +621,7 @@
                         } else if (slideValue < 0) {
                             slideValue = 0;
                         }
-                        $this.move($el, slideValue);
+                        $this.moveSlide($el, slideValue);
                         if (settings.loop === true && settings.mode === 'slide') {
                             if (scene >= (length - ($el.find('.clone.left').length / settings.slideMove))) {
                                 $this.resetSlide($el.find('.clone.left').length);
@@ -593,7 +642,7 @@
                     $slide.css('transition-duration', '0ms');
                     slideValue = $this.slideValue();
                     $this.active($children, false);
-                    plugin.move($el, slideValue);
+                    plugin.moveSlide($el, slideValue);
                     setTimeout(function () {
                         $slide.css('transition-duration', settings.speed + 'ms');
                         $slide.find('.lSAction a').removeClass('disabled');
@@ -633,14 +682,25 @@
                         sc = $pager.children().length;
                     }
                 }
-                var thumbSlide = sc * ((thumbWidth + settings.thumbMargin)) - (position);
-                if ((thumbSlide + elSize) > pagerWidth) {
-                    thumbSlide = pagerWidth - elSize - settings.thumbMargin;
+                var thumbSlide;
+                if(settings.vertical) {
+                    thumbSlide = sc * ($slide.outerHeight() + settings.thumbMargin) / settings.thumbItem;
+                } else {
+                    thumbSlide = sc * ((thumbWidth + settings.thumbMargin)) - (position);
+                }
+                if (settings.vertical) {
+                  if ((thumbSlide + $slide.outerHeight()) >= pagerWidth) {
+                    thumbSlide = pagerWidth - $slide.outerHeight() - settings.thumbMargin;
+                  }
+                } else {
+                  if ((thumbSlide + elSize) > pagerWidth) {
+                      thumbSlide = pagerWidth - elSize - settings.thumbMargin;
+                  }
                 }
                 if (thumbSlide < 0) {
                     thumbSlide = 0;
                 }
-                this.move($pager, thumbSlide);
+                this.moveThumb($pager, thumbSlide);
             },
             auto: function () {
                 if (settings.auto) {
@@ -686,7 +746,7 @@
                             swipeVal = swipeVal / 5;
                         }
                     }
-                    this.move($el, swipeVal);
+                    this.moveSlide($el, swipeVal);
                 }
             },
 
@@ -764,7 +824,15 @@
                             }
                         }
                         if ($(e.target).attr('class') !== ('lSPrev') && $(e.target).attr('class') !== ('lSNext')) {
-                            startCoords = (settings.vertical === true) ? e.pageY : e.pageX;
+                            if (settings.vertical === true) {
+                              if (settings.galleryHorizontal == true) {
+                                startCoords = e.pageX;
+                              } else {
+                                startCoords = e.pageY;
+                              }
+                            } else {
+                              startCoords = e.pageX;
+                            }
                             isDraging = true;
                             if (e.preventDefault) {
                                 e.preventDefault();
@@ -781,7 +849,15 @@
                     });
                     $(window).on('mousemove', function (e) {
                         if (isDraging) {
-                            endCoords = (settings.vertical === true) ? e.pageY : e.pageX;
+                            if (settings.vertical === true) {
+                              if (settings.galleryHorizontal == true) {
+                                endCoords = e.pageX;
+                              } else {
+                                endCoords = e.pageY;
+                              }
+                            } else {
+                              endCoords = e.pageX;
+                            }
                             $this.touchMove(endCoords, startCoords);
                         }
                     });
@@ -789,7 +865,15 @@
                         if (isDraging) {
                             $slide.find('.lightSlider').removeClass('lsGrabbing').addClass('lsGrab');
                             isDraging = false;
-                            endCoords = (settings.vertical === true) ? e.pageY : e.pageX;
+                            if (settings.vertical === true) {
+                              if (settings.galleryHorizontal == true) {
+                                endCoords = e.pageX;
+                              } else {
+                                endCoords = e.pageY;
+                              }
+                            } else {
+                              endCoords = e.pageX;
+                            }
                             var distance = endCoords - startCoords;
                             if (Math.abs(distance) >= settings.swipeThreshold) {
                                 $(window).on('click.ls', function (e) {
@@ -880,7 +964,7 @@
                 $(window).on('focus', function(){
                     $this.auto();
                 });
-                
+
                 $(window).on('blur', function(){
                     clearInterval(interval);
                 });
@@ -895,12 +979,16 @@
         refresh.init = function () {
             refresh.chbreakpoint();
             if (settings.vertical === true) {
-                if (settings.item > 1) {
-                    elSize = settings.verticalHeight;
+                if (settings.galleryHorizontal === true) {
+                    elSize = $slide.outerWidth();
                 } else {
-                    elSize = $children.outerHeight();
+                  if (settings.item > 1) {
+                      elSize = settings.verticalHeight;
+                  } else {
+                      elSize = $children.outerHeight();
+                  }
+                  $slide.css('height', elSize + 'px');
                 }
-                $slide.css('height', elSize + 'px');
             } else {
                 elSize = $slide.outerWidth();
             }
@@ -1083,7 +1171,7 @@
                 }
             }
             return sc + 1;
-        }; 
+        };
         $el.getTotalSlideCount = function () {
             return $slide.find('.lslide').length;
         };
@@ -1108,7 +1196,7 @@
                 $el.refresh = function(){};
                 $el.getCurrentSlideCount = function(){};
                 $el.getTotalSlideCount = function(){};
-                $el.goToSlide = function(){}; 
+                $el.goToSlide = function(){};
                 $el.lightSlider = null;
                 refresh = {
                     init : function(){}
