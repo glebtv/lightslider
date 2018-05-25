@@ -32,32 +32,43 @@
     .demo {
       width: 100%
     }
+
   </style>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script src="../src/js/lightslider.js"></script>
   <script>
     $(document).ready(function() {
-      $("#content-slider").lightSlider({
-        loop: true,
-        keyPress: true
-      });
       $('#image-gallery').lightSlider({
-        gallery: true,
-        item: 1,
-        thumbItem: 3,
+        gallery:true,
+        item:1,
+        thumbItem:3,
         slideMargin: 0,
-        speed: 500,
-        auto: true,
-        loop: true,
+        speed:500,
+        auto:true,
+        loop:true,
         thumbPosition: "left",
         vertical: true,
+        vThumbWidth: 210,
         galleryHorizontal: true,
         galleryMargin: 15,
         fitImages: true,
-        verticalHeight: 630,
+        verticalHeight: 507,
         onSliderLoad: function() {
           $('#image-gallery').removeClass('cS-hidden');
-        }
+        },
+        responsive : [
+          {
+            breakpoint: 800,
+            settings: {
+              vThumbWidth: 120,
+            }
+          }, {
+            breakpoint: 480,
+            settings: {
+              vThumbWidth: 100,
+            }
+          }
+        ]
       });
     });
   </script>
@@ -66,7 +77,7 @@
 <body>
   <div class="demo">
     <div class="item">
-      <div class="clearfix" style="max-width:474px;">
+      <div class="clearfix">
         <ul id="image-gallery" class="gallery list-unstyled cS-hidden">
           <li data-thumb="img/thumb/cS-1.jpg">
             <img src="img/cS-1.jpg" />
