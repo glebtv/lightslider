@@ -983,19 +983,9 @@
         refresh.init = function () {
             refresh.chbreakpoint();
             if (settings.vertical === true) {
-                if (settings.galleryHorizontal === true) {
-                    elSize = $slide.outerWidth();
-                } else {
-                  if (settings.item > 1) {
-                      elSizeHeight = settings.verticalHeight;
-                  } else {
-                      elSizeHeight = $children.outerHeight();
-                  }
-                  $slide.css('height', elSizeHeight + 'px');
-                }
-            } else {
-                elSize = $slide.outerWidth();
+              $slide.css('height', settings.verticalHeight + 'px');
             }
+            elSize = $slide.outerWidth();
             if (settings.loop === true && settings.mode === 'slide') {
                 refresh.clone();
             }
