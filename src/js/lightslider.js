@@ -89,6 +89,8 @@
             isTouch = ('ontouchstart' in document.documentElement);
         var refresh = {};
 
+        var currentGalleryFlag = null;
+
         refresh.chbreakpoint = function () {
             windowW = $(window).width();
             if (settings.responsive.length) {
@@ -114,6 +116,7 @@
                         }
                     }
                 }
+
                 if (!$.isEmptyObject(settingsTemp) && windowW > settings.responsive[0].breakpoint) {
                     for (var k in settingsTemp) {
                         if (settingsTemp.hasOwnProperty(k)) {
@@ -121,6 +124,18 @@
                         }
                     }
                 }
+
+                if (currentGalleryFlag !== null && currentGalleryFlag != settings.gallery) {
+                  console.log("change gallery value to", settings.gallery)
+                  setTimeout(function() {
+                    $el.destroy();
+                    console.log($el)
+                    $($el).lightSlider(options)
+                  })
+                  //console.log($el)
+                }
+                currentGalleryFlag = settings.gallery;
+
                 if (settings.autoWidth === false) {
                     if (slideValue > 0 && slideWidth > 0) {
                         if (item !== settings.item) {

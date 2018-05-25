@@ -39,7 +39,7 @@
   <script>
     $(document).ready(function() {
       $('#image-gallery').lightSlider({
-        gallery:true,
+        gallery: true,
         item:1,
         thumbItem:3,
         slideMargin: 0,
@@ -58,13 +58,15 @@
         },
         responsive : [
           {
-            breakpoint: 800,
+            breakpoint: 480,
             settings: {
+              gallery: false,
               vThumbWidth: 120,
             }
           }, {
-            breakpoint: 480,
+            breakpoint: 800,
             settings: {
+              gallery: false,
               vThumbWidth: 100,
             }
           }
