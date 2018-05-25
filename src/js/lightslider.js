@@ -984,14 +984,14 @@
             refresh.chbreakpoint();
             if (settings.vertical === true) {
                 if (settings.galleryHorizontal === true) {
-                    elSize = settings.verticalHeight;
+                    elSize = $slide.outerWidth();
                 } else {
                   if (settings.item > 1) {
-                      elSize = settings.verticalHeight;
+                      elSizeHeight = settings.verticalHeight;
                   } else {
-                      elSize = $children.outerHeight();
+                      elSizeHeight = $children.outerHeight();
                   }
-                  $slide.css('height', elSize + 'px');
+                  $slide.css('height', elSizeHeight + 'px');
                 }
             } else {
                 elSize = $slide.outerWidth();
